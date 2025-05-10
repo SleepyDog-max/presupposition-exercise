@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Presupposition Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1bee7);
+      padding: 30px;
+    }
+    .question-container {
+      display: none;
+      background: #ffffff;
+      border: 3px solid #90caf9;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .visible {
+      display: block;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      background: #5c6bc0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #7986cb;
+    }
+    .summary {
+      display: none;
+      background-color: #f3e5f5;
+      border: 2px solid #ce93d8;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .correct {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+    .incorrect {
+      color: #c62828;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center; color:#4a148c;">Presupposition Quiz</h1>
+
+  <form id="quizForm">
+    <!-- Questions will be added here by script -->
+  </form>
+
+  <div class="buttons" style="text-align:center;">
+    <button type="button" onclick="prevQuestion()">Previous</button>
+    <button type="button" onclick="nextQuestion()">Next</button>
+    <button type="button" onclick="restartQuiz()">Restart</button>
+    <button type="button" onclick="showSummary()">Submit</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <script>
+    const questionsData = [
+      {
+        html: `<p><strong>1. Which of the following sentences contains a <em>presupposition trigger</em>?</strong></p>
+          <label><input type="radio" name="q1" value="A"> A. She might arrive later.</label><br>
+          <label><input type="radio" name="q1" value="B"> B. If she arrives, let me know.</label><br>
+          <label><input type="radio" name="q1" value="C"> C. She has stopped eating meat.</label><br>
+          <label><input type="radio" name="q1" value="D"> D. She is very tall.</label>`,
+        correct: 'C',
+        explanation: "The verb 'stop' is a change-of-state verb, which presupposes that the activity was being performed beforehand. So when someone says, 'She has stopped eating meat,' it presupposes she used to eat meat."
+      },
+      {
+        html: `<p><strong>2. Which sentence presupposes that <em>Paul has children</em>?</strong></p>
+          <label><input type="radio" name="q2" value="A"> A. Does Paul have any children?</label><br>
+          <label><input type="radio" name="q2" value="B"> B. Paul’s children go to the same school as mine.</label><br>
+          <label><input type="radio" name="q2" value="C"> C. I hope Paul has children one day.</label><br>
+          <label><input type="radio" name="q2" value="D"> D. Paul doesn’t want to have children.</label>`,
+        correct: 'B',
+        explanation: "The phrase 'Paul’s children' uses a definite noun phrase, which presupposes the existence of those children. This assumption is taken for granted by the speaker, making the presupposition unavoidable even under negation or questioning."
+      },
+      {
+        html: `<p><strong>3. Which sentence contains a <em>semantic presupposition</em>?</strong></p>
+          <label><input type="radio" name="q3" value="A"> A. I wish I could travel more.</label><br>
+          <label><input type="radio" name="q3" value="B"> B. It was Maria who won the race.</label><br>
+          <label><input type="radio" name="q3" value="C"> C. Do you know the answer?</label><br>
+          <label><input type="radio" name="q3" value="D"> D. Could you possibly be any ruder?</label>`,
+        correct: 'B',
+        explanation: "Cleft constructions like 'It was Maria who won the race' presuppose that someone won the race. This structure highlights a particular element (Maria) while taking the rest of the proposition for granted."
+      },
+      {
+        html: `<p><strong>4. Which of the following is an example of <em>presupposition surviving negation</em>?</strong></p>
+          <label><input type="radio" name="q4" value="A"> A. I didn’t stop smoking.</label><br>
+          <label><input type="radio" name="q4" value="B"> B. I didn’t sleep last night.</label><br>
+          <label><input type="radio" name="q4" value="C"> C. I didn’t go to work today.</label><br>
+          <label><input type="radio" name="q4" value="D"> D. I didn’t win the game.</label>`,
+        correct: 'A',
+        explanation: "Presuppositions are known to survive negation. 'I didn’t stop smoking' presupposes that the speaker used to smoke. The negation doesn’t affect this assumption."
+      },
+      {
+        html: `<p><strong>5. Which expression is most likely to trigger a <em>pragmatic presupposition</em>?</strong></p>
+          <label><input type="radio" name="q5" value="A"> A. The capital of France is Paris.</label><br>
+          <label><input type="radio" name="q5" value="B"> B. Even Tom solved the puzzle.</label><br>
+          <label><input type="radio" name="q5" value="C"> C. John is taller than Mary.</label><br>
+          <label><input type="radio" name="q5" value="D"> D. I drank coffee.</label>`,
+        correct: 'B',
+        explanation: "The word 'even' introduces a pragmatic presupposition. In 'Even Tom solved the puzzle', it is presupposed that Tom is the least expected person to solve it, implying that others did or that it was a difficult task."
+      }
+    ];
+
+    questionsData.push(
+      {
+        html: `<p><strong>6. Identify the presupposition in: "When did you stop playing the guitar?" What structure triggers it?</strong></p>
+          <textarea name="q6" rows="4" cols="80"></textarea>`,
+        explanation: "It presupposes that the person used to play the guitar. Trigger: the change-of-state verb 'stop' within a wh-question."
+      },
+      {
+        html: `<p><strong>7. What does "Mike broke his leg again" presuppose, and what kind of presupposition is it?</strong></p>
+          <textarea name="q7" rows="4" cols="80"></textarea>`,
+        explanation: "Presupposes that Mike had broken his leg before. Type: semantic presupposition triggered by the iterative 'again'."
+      },
+      {
+        html: `<p><strong>8. Why might the question "Have you stopped cheating on your exams?" be problematic in court?</strong></p>
+          <textarea name="q8" rows="4" cols="80"></textarea>`,
+        explanation: "It presupposes the person has cheated before. This kind of presupposition, if unfounded, can bias judgment and constitutes a 'loaded question'."
+      }
+    );
+
+    const form = document.getElementById("quizForm");
+    let current = 0;
+
+    questionsData.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question-container" + (i === 0 ? " visible" : "");
+      div.innerHTML = q.html;
+      form.appendChild(div);
+    });
+
+    function showQuestion(index) {
+      document.querySelectorAll('.question-container').forEach((q, i) => {
+        q.classList.toggle('visible', i === index);
+      });
+    }
+    function nextQuestion() {
+      if (current < questionsData.length - 1) current++;
+      showQuestion(current);
+    }
+    function prevQuestion() {
+      if (current > 0) current--;
+      showQuestion(current);
+    }
+    function restartQuiz() {
+      document.getElementById('quizForm').reset();
+      current = 0;
+      showQuestion(current);
+      document.getElementById('summary').style.display = 'none';
+    }
+    function showSummary() {
+      let html = '<h2>Summary and Answers</h2>';
+      questionsData.forEach((q, i) => {
+        const qName = `q${i+1}`;
+        if (q.correct) {
+          const selected = document.querySelector(`input[name='${qName}']:checked`);
+          const value = selected ? selected.value : '[No answer]';
+          const isCorrect = value === q.correct;
+          html += `<p><strong>Q${i+1}:</strong> Your answer: <span class="${isCorrect ? 'correct' : 'incorrect'}">${value}</span><br>` +
+                  `Correct answer: ${q.correct}<br><em>Explanation:</em> ${q.explanation}</p>`;
+        } else {
+          html += `<p><strong>Q${i+1}:</strong> <em>Explanation:</em> ${q.explanation}</p>`;
+        }
+      });
+      document.getElementById('summary').innerHTML = html;
+      document.getElementById('summary').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
